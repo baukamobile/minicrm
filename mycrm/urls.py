@@ -8,5 +8,5 @@ urlpatterns = [
     path('record/<int:pk>', customer_record, name = 'record'),
     path('delete_record/<int:pk>', delete_record, name='delete'),
     path('add_record/', add_record, name='add_record'),
-
+    path('update/<int:pk>/', update_record, name='update_record')
 ]   
