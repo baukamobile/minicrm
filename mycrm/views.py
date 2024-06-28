@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages 
-from .forms import SignUpForm
+from .forms import SignUpForm, AddRecordForm
 from .models import Record
 # Create your views here.
 
@@ -68,3 +68,36 @@ def register_user(request):
     return render(request, 'register.html', context={
         'form': form,
     })
+
+
+def customer_record(request, pk):
+    if request.user.is_authenticated:
+        customer_record = Record.objects.get(id=pk)
+        return render(request, 'record.html', context={'customer_record':customer_record})
+    else:
+        messages.success(request, 'something wrong')
+        return redirect('home')
+
+
+def delete_record(request, pk):
+    if request.user.is_authenticated:
+        delete_rd = Record.objects.get(id=pk)
+        delete_rd.delete()
+        messages.success(request, 'Deleted...')
+        return redirect('home')
+    else:
+        messages.success(request, 'You must be logged to do that')
+        return redirect('home')
+    
+def add_record(request):
+    form = AddRecordForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method=='POST':
+            if form.is_valid():
+                add_record = form.save()
+                messages.success(request, 'Record Added...')
+                return redirect('home')
+        return render(request, 'add_record.html', context={'form':form})
+    else:
+        messages.success(request, 'Record Added...')
+        return redirect('home')
